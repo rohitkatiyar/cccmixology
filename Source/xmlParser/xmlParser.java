@@ -48,7 +48,7 @@ public class xmlParser {
 			initializeStmt.execute();
 			
 			String query = "INSERT INTO RECIPE (RECIPEID, TITLE, PREPARATION) VALUES (?, ?, ?)";
-			String queryIng = "INSERT INTO INGREDIENTS (INGID, NAME) VALUES (?, ?)";
+			String queryIng = "INSERT INTO INGREDIENTS (INGID, NAME, BASENAME) VALUES (?, ?, ?)";
 			String queryRecIng = "INSERT INTO  Recipe_Ing(RECID, IGID, QUANTITY, UNIT) VALUES (?, ?, ?, ?)";
 			PreparedStatement statement=connection.prepareStatement(query);
 			PreparedStatement statementIng=connection.prepareStatement(queryIng);
@@ -99,12 +99,15 @@ public class xmlParser {
 							
 							ingName = ingName.toLowerCase();
 							
+							String baseName = getBaseName(ingName);
+							
 							if(!ingList.containsKey(ingName))
 							{
 								ingList.put(ingName, ingId);
 								statementIng.setInt(1,ingId);
 								ingId++;
 								statementIng.setString(2, ingName);
+								statementIng.setString(3, baseName);
 								statementIng.execute();
 								
 							}
@@ -148,5 +151,54 @@ public class xmlParser {
 		}
 	}
 
+	public static String getBaseName(String name)
+	{
+		String baseName = null;
+		
+		if(name.indexOf("rum") != -1)
+		{
+			baseName = "rum";
+		}
+		else if(name.indexOf("syrup") != -1)
+		{
+			baseName = "syrup";
+		}
+		else if(name.indexOf("wine") != -1)
+		{
+			baseName = "wine";
+		}
+		else if(name.indexOf("juice") != -1 || name.indexOf("lemonade") != -1)
+		{
+			baseName = "juice";
+		}
+		else if(name.indexOf("ice") != -1)
+		{
+			baseName = "ice";
+		}
+		else if(name.indexOf("sugar") != -1)
+		{
+			baseName = "sugar";
+		}
+		else if(name.indexOf("stout") != -1 || name.indexOf("beer") != -1)
+		{
+			baseName = "beer";
+		}
+		else if((name.indexOf("kumquat") != -1 || name.indexOf("litchi") != -1) 
+				&& name.indexOf("juice") == -1)
+		{
+			baseName = "fruit";
+		}
+		else if(name.indexOf("berry") != -1 && name.indexOf("juice") == -1)
+		{
+			baseName = "berry";
+		}
+		else if(name.indexOf("liqueur") != -1)
+		{
+			baseName = "liqueur";
+		}
+		
+		return baseName;
+		
+	}
 
 }
