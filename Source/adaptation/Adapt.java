@@ -50,7 +50,7 @@ public class Adapt {
 		
 	}
 	
-	public void calculateScore()
+	public void calculateScore(ArrayList<String> desIngList, ArrayList<String> undesIngList, ArrayList<Recipe> recipeList, Map<Integer, Integer> recScore)
 	{
 		int score = 0;
 		
