@@ -23,6 +23,10 @@ public class UnitTest {
 		populateRecipes();
 		populateDesiredUndesiredIngredients();
 		
+		System.out.println(desIngList);
+		System.out.println(undesIngList);
+		System.out.println(recipeList);
+		
 		Adapt adapt = new Adapt();
 		
 		adapt.calculateScore(desIngList, undesIngList, recipeList, recScore);
@@ -48,37 +52,37 @@ public class UnitTest {
 		addIng.add("vodka");
 		addIng.add("blueberry");
 		addIng.add("raspberry");
-		Recipe recipe = new Recipe(101,addIng);
-		recipeList.add(recipe);
+		Recipe recipe1 = new Recipe(101,addIng);
+		recipeList.add(recipe1);
 		
-		addIng.clear();
+		addIng = new ArrayList<String>();
 		addIng.add("vodka");
 		addIng.add("rum");
 		addIng.add("gin");
-		recipe = new Recipe(102,addIng);
-		recipeList.add(recipe);
+		Recipe recipe2 = new Recipe(102,addIng);
+		recipeList.add(recipe2);
 		
-		addIng.clear();
+		addIng = new ArrayList<String>();
 		addIng.add("vodka");
 		addIng.add("rum");
 		addIng.add("blueberry");
 		addIng.add("whisky");
-		recipe = new Recipe(103,addIng);
-		recipeList.add(recipe);
+		Recipe recipe3 = new Recipe(103,addIng);
+		recipeList.add(recipe3);
 		
-		addIng.clear();
+		addIng = new ArrayList<String>();
 		addIng.add("vodka");
 		addIng.add("gin");
 		addIng.add("whisky");
 		addIng.add("strawberry");
-		recipe = new Recipe(104,addIng);
-		recipeList.add(recipe);
+		Recipe recipe4 = new Recipe(104,addIng);
+		recipeList.add(recipe4);
 		
-		addIng.clear();
+		addIng = new ArrayList<String>();
 		addIng.add("vodka");
 		addIng.add("raspberry");
-		recipe = new Recipe(105,addIng);
-		recipeList.add(recipe);
+		Recipe recipe5 = new Recipe(105,addIng);
+		recipeList.add(recipe5);
 	}
 
 }
