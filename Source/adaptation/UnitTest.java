@@ -10,6 +10,8 @@ public class UnitTest {
 	ArrayList<String> desIngList = new ArrayList<String>();
 	ArrayList<String> undesIngList = new ArrayList<String>();
 	ArrayList<Recipe> recipeList = new ArrayList<Recipe>();
+	Map<Integer, ArrayList<String>> missingDesiredIngList = new HashMap<Integer, ArrayList<String>>();
+	Map<Integer, ArrayList<String>> haveUndesiredIngList = new HashMap<Integer, ArrayList<String>>();
 	
 	public static void main(String args[])
 	{
@@ -29,9 +31,12 @@ public class UnitTest {
 		
 		Adapt adapt = new Adapt();
 		
-		adapt.calculateScore(desIngList, undesIngList, recipeList, recScore);
+		adapt.calculateScore(desIngList, undesIngList, recipeList, recScore, 
+				missingDesiredIngList, haveUndesiredIngList);
 		
-		System.out.println(recScore);
+		System.out.println("SCORE LIST::" + recScore);
+		System.out.println("Missing Desired Ingredient List" + missingDesiredIngList);
+		System.out.println("Have UnDesired Ingredient List" + haveUndesiredIngList);
 	}
 	
 	public void populateDesiredUndesiredIngredients()

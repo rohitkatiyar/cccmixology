@@ -16,7 +16,9 @@ public class Adapt {
 	ArrayList<String> desIngList = new ArrayList<String>();
 	ArrayList<String> undesIngList = new ArrayList<String>();
 	ArrayList<Recipe> recipeList = new ArrayList<Recipe>();
-	Map<Integer, Integer> recScore = new HashMap<Integer, Integer>();
+	Map<Integer, Integer> recScore = new HashMap<Integer, Integer>();// Recipe Id, Score
+	Map<Integer, ArrayList<String>> missingDesiredIngList = new HashMap<Integer, ArrayList<String>>();
+	Map<Integer, ArrayList<String>> haveUndesiredIngList = new HashMap<Integer, ArrayList<String>>();
 	
 	public static void main(String args[])
 	{
@@ -45,24 +47,37 @@ public class Adapt {
 		}
 	}
 	
-	public void adaptRecipe()
+	public void adaptRecipe(Recipe recipe)
 	{
 		
 	}
 	
-	public void calculateScore(ArrayList<String> desIngList, ArrayList<String> undesIngList, ArrayList<Recipe> recipeList, Map<Integer, Integer> recScore)
+	public void calculateScore(
+			ArrayList<String> desIngList, 
+			ArrayList<String> undesIngList, 
+			ArrayList<Recipe> recipeList, 
+			Map<Integer, Integer> recScore, 
+			Map<Integer, ArrayList<String>> missingDesiredIngList, 
+			Map<Integer, ArrayList<String>> haveUndesiredIngList)
 	{
 		int score = 0;
+		ArrayList<String> aMisDesIngList, aHaveUndesIngList;
 		
 		for(int i=0; i < recipeList.size(); i++)
 		{
 			score = 0;
+			aMisDesIngList = new ArrayList<String>();
+			aHaveUndesIngList = new ArrayList<String>();
 			
 			for(int j=0; j < desIngList.size(); j++)
 			{
 				if(recipeList.get(i).getRecipeIng().contains(desIngList.get(j)))
 				{
 					score = score + 500;
+				}
+				else
+				{
+					aMisDesIngList.add(desIngList.get(j));
 				}
 			}
 			
@@ -71,10 +86,13 @@ public class Adapt {
 				if(recipeList.get(i).getRecipeIng().contains(undesIngList.get(k)))
 				{
 					score = score - 500;
+					aHaveUndesIngList.add(undesIngList.get(k));
 				}
 			}
 			
 			recScore.put(recipeList.get(i).getRecId(), score);
+			missingDesiredIngList.put(recipeList.get(i).getRecId(), aMisDesIngList);
+			haveUndesiredIngList.put(recipeList.get(i).getRecId(), aHaveUndesIngList);
 		}
 	}
 
