@@ -4,22 +4,25 @@ import java.util.ArrayList;
 
 public class Recipe {
 	private int recId;
-	boolean isAdapted;
-	private ArrayList<String> recipeIng;
+	private ArrayList<Ingredient> ingredients;
+	private String steps;
 	
-	public Recipe(int recId, ArrayList<String> recipeIng) {
+	public Recipe(int recId) {
 		super();
 		this.recId = recId;
-		this.isAdapted = false;
-		this.recipeIng = recipeIng;
 	}
-
-	public boolean isAdapted() {
-		return isAdapted;
+	
+	public Recipe(int recId, ArrayList<Ingredient> ingredients) {
+		super();
+		this.recId = recId;
+		this.ingredients = ingredients;
 	}
-
-	public void setAdapted(boolean isAdapted) {
-		this.isAdapted = isAdapted;
+	
+	public Recipe(int recId, ArrayList<Ingredient> ingredients, String steps) {
+		super();
+		this.recId = recId;
+		this.ingredients = ingredients;
+		this.steps = steps;
 	}
 
 	public int getRecId() {
@@ -30,17 +33,25 @@ public class Recipe {
 		this.recId = recId;
 	}
 
-	public ArrayList<String> getRecipeIng() {
-		return recipeIng;
+	public ArrayList<Ingredient> getIngredients() {
+		return ingredients;
 	}
-
-	public void setRecipeIng(ArrayList<String> recipeIng) {
-		this.recipeIng = recipeIng;
+	
+	public void setIngredients(ArrayList<Ingredient> ingredients) {
+		this.ingredients = ingredients;
 	}
-
+	
+	public String getSteps() {
+		return steps;
+	}
+	
+	public void setSteps(String steps) {
+		this.steps = steps;
+	}
+	
 	@Override
 	public String toString() {
-		return "Recipe [recId=" + recId + ", recipeIng=" + recipeIng + "]";
+		return "Recipe [ID : " + recId + "\nIngredients:" + ingredients.toString() + "\nPreparation:\n "+steps + "\n]";
 	}
 	
 }
