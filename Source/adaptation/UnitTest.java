@@ -37,6 +37,14 @@ public class UnitTest {
 		System.out.println("SCORE LIST::" + recScore);
 		System.out.println("Missing Desired Ingredient List" + missingDesiredIngList);
 		System.out.println("Have UnDesired Ingredient List" + haveUndesiredIngList);
+		
+		ArrayList<String> substitutionList = new ArrayList<String>();
+		
+		substitutionList = adapt.findSubstitution("Tequila");
+		System.out.println("SUBSTITUTION LIST1::" + substitutionList);
+		
+		substitutionList = adapt.findSubstitution("papaya");
+		System.out.println("SUBSTITUTION LIST2::" + substitutionList);
 	}
 	
 	public void populateDesiredUndesiredIngredients()
