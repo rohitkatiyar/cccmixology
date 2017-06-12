@@ -12,6 +12,8 @@ public class UnitTest {
 	ArrayList<Recipe> recipeList = new ArrayList<Recipe>();
 	Map<Integer, ArrayList<String>> missingDesiredIngList = new HashMap<Integer, ArrayList<String>>();
 	Map<Integer, ArrayList<String>> haveUndesiredIngList = new HashMap<Integer, ArrayList<String>>();
+	Map<Integer, Map<String,String>> replacementMap = new HashMap<Integer, Map<String,String>>();
+	Map<Integer, ArrayList<String>> mapRecipeIngredientNamesList = new HashMap<Integer, ArrayList<String>>();
 	
 	public static void main(String args[])
 	{
@@ -45,6 +47,13 @@ public class UnitTest {
 		
 		substitutionList = adapt.findSubstitution("papaya");
 		System.out.println("SUBSTITUTION LIST2::" + substitutionList);
+		
+		adapt.adaptRecipe(recipeList.get(0), 
+				missingDesiredIngList, 
+				haveUndesiredIngList, 
+				replacementMap);
+		
+		System.out.println("ADAPTATION::" + replacementMap);
 	}
 	
 	public void populateDesiredUndesiredIngredients()

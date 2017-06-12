@@ -6,16 +6,19 @@ public class Recipe {
 	private int recId;
 	private ArrayList<Ingredient> ingredients;
 	private String steps;
+	private boolean isAdapted;
 	
 	public Recipe(int recId) {
 		super();
 		this.recId = recId;
+		this.isAdapted = false;
 	}
 	
 	public Recipe(int recId, ArrayList<Ingredient> ingredients) {
 		super();
 		this.recId = recId;
 		this.ingredients = ingredients;
+		this.isAdapted = false;
 	}
 	
 	public Recipe(int recId, ArrayList<Ingredient> ingredients, String steps) {
@@ -23,6 +26,15 @@ public class Recipe {
 		this.recId = recId;
 		this.ingredients = ingredients;
 		this.steps = steps;
+		this.isAdapted = false;
+	}
+
+	public boolean isAdapted() {
+		return isAdapted;
+	}
+
+	public void setAdapted(boolean isAdapted) {
+		this.isAdapted = isAdapted;
 	}
 
 	public int getRecId() {

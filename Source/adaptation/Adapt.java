@@ -13,56 +13,54 @@ import connection.JdbcConnection;
 
 public class Adapt {
 	
-	ArrayList<Integer> recipeIds = new ArrayList<Integer>();
-	ArrayList<String> desIngList = new ArrayList<String>();
-	ArrayList<String> undesIngList = new ArrayList<String>();
-	ArrayList<Recipe> recipeList = new ArrayList<Recipe>();
+	//ArrayList<Integer> recipeIds = new ArrayList<Integer>();
+	static ArrayList<String> desIngList = new ArrayList<String>(); // Pending to populate from Front end
+	static ArrayList<String> undesIngList = new ArrayList<String>(); // Pending to populate from Front end
+	
+	static ArrayList<Integer> desIngIDsList = new ArrayList<Integer>();
+	static ArrayList<Integer> undesIngIDsList = new ArrayList<Integer>();
+	
+	static ArrayList<Recipe> recipeList = new ArrayList<Recipe>(); // Populate from database
+	
+	static Map<Integer, ArrayList<String>> mapRecipeIngredientNamesList = new HashMap<Integer, ArrayList<String>>();
+	
 	Map<Integer, Integer> recScore = new HashMap<Integer, Integer>();// Recipe Id, Score
 	Map<Integer, ArrayList<String>> missingDesiredIngList = new HashMap<Integer, ArrayList<String>>();
 	Map<Integer, ArrayList<String>> haveUndesiredIngList = new HashMap<Integer, ArrayList<String>>();
 	
+	// Map to record the adaptation for each recipe, will be used while giving the output XML
+	Map<Integer, Map<String,String>> replacementMap = new HashMap<Integer, Map<String,String>>();
+	
 	public static void main(String args[])
 	{
 		Adapt obj = new Adapt();
-		obj.fetchRecipe();
+		
+		desIngIDsList = GeneralizeAndQuery.getIngIdList(desIngList);
+		undesIngIDsList = GeneralizeAndQuery.getIngIdList(undesIngList);
+		
+		recipeList = GeneralizeAndQuery.getRecipeList(desIngIDsList, undesIngIDsList);
+		
+		//obj.getAllRecipeIngredientNames(recipeList, mapRecipeIngredientNamesList);
 	}
 	
-	public void fetchRecipe()
-	{
-		Connection connection = null;
-		try {
-			connection = JdbcConnection.getConnection();
-			String query = "SELECT DISTINCT(recId) from recipe_ing where igId IN (Select ingId from ingredients where name IN('white rum', 'cane syrup'));";
-			PreparedStatement initialQuery = connection.prepareStatement(query);
-			
-			ResultSet rs = initialQuery.executeQuery();
-			
-			while(rs.next())
-			{
-				int recId = rs.getInt("recId");
-				
-				System.out.println(recId);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public Recipe adaptRecipe(Recipe recipe, 
+	public void adaptRecipe(Recipe recipe, 
 			Map<Integer, ArrayList<String>> missingDesiredIngList,
-			Map<Integer, ArrayList<String>> haveUndesiredIngList)
+			Map<Integer, ArrayList<String>> haveUndesiredIngList,
+			Map<Integer, Map<String,String>> replacementMap)
 	{
+		// substitutionList contains list of ingredients the which can be replaced with the desired one
 		ArrayList<String> newIngList, substitutionList, currentIngList;
-		//Map<String, ArrayList<String>> mapSubstitution;
+		Map<String, String> mapReplace;
 		
 		if(missingDesiredIngList.get(recipe.getRecId()).isEmpty() == true && haveUndesiredIngList.get(recipe.getRecId()).isEmpty() == true)
 		{
 			// Recipe has all Desired Ingredients
 			// Recipe has no Undesired Ingredients
 			// Perfect Recipe, No Adaptation
+			mapReplace = new HashMap<String, String>();
+			mapReplace.put("PERFECT", "RECIPE");
 			
-			
-			return recipe;
+			replacementMap.put(recipe.getRecId(), mapReplace);
 		}
 		else if(missingDesiredIngList.get(recipe.getRecId()).isEmpty() == false && haveUndesiredIngList.get(recipe.getRecId()).isEmpty() == true)
 		{
@@ -70,96 +68,127 @@ public class Adapt {
 			// Recipe has no Undesired Ingredients
 			// Close to perfect Recipe, adapt by adding the missing ingredient by replacing with other
 			
-			//mapSubstitution = new HashMap<String, ArrayList<String>>();
+			boolean isReplaced = false;
+			
+			// Map to save the details of replacement
+			mapReplace = new HashMap<String, String>();
 			
 			for(String ing : missingDesiredIngList.get(recipe.getRecId()))
 			{
-				//mapSubstitution.put(ing, findSubstitution(ing));
+				isReplaced = false;
 				substitutionList = new ArrayList<String>();
 				substitutionList = findSubstitution(ing);
 				
-				currentIngList = recipe.getRecipeIng();
+				currentIngList = mapRecipeIngredientNamesList.get(recipe.getRecId());
 				for(String recipeIng : currentIngList)
 				{
 					if(substitutionList.contains(recipeIng) == true && desIngList.contains(recipeIng) == false)
 					{
 						newIngList = new ArrayList<String>();
-						newIngList = recipe.getRecipeIng();
+						newIngList = mapRecipeIngredientNamesList.get(recipe.getRecId());
 						Collections.replaceAll(newIngList, recipeIng, ing);
-						recipe.setRecipeIng(newIngList);
+						mapRecipeIngredientNamesList.put(recipe.getRecId(), newIngList);
+						isReplaced = true;
+						
+						mapReplace.put(recipeIng, ing);
 						break;
 					}
+				}
+				
+				if(isReplaced == false)
+				{
+					newIngList = new ArrayList<String>();
+					newIngList = mapRecipeIngredientNamesList.get(recipe.getRecId());
+					newIngList.add(ing);
+					mapRecipeIngredientNamesList.put(recipe.getRecId(), newIngList);
+					
+					mapReplace.put("ADDED", ing);
 				}
 			}
 			
 			recipe.setAdapted(true);
 			
-			return recipe;
+			replacementMap.put(recipe.getRecId(), mapReplace);
 		}
 		else if(missingDesiredIngList.get(recipe.getRecId()).isEmpty() == true && haveUndesiredIngList.get(recipe.getRecId()).isEmpty() == false)
 		{
 			// Recipe has all Desired Ingredients
 			// Recipe has Undesired Ingredients
 			// Close to perfect Recipe, adapt by removing Undesired Ingredient(Remove from steps too)
+			mapReplace = new HashMap<String, String>();
 			
 			newIngList = new ArrayList<String>();
-			newIngList = recipe.getRecipeIng();
+			newIngList = mapRecipeIngredientNamesList.get(recipe.getRecId());
 			
 			for(String ing : haveUndesiredIngList.get(recipe.getRecId()))
 			{
 				newIngList.remove(ing);
+				mapReplace.put("REMOVE", ing);
 			}
 			
-			recipe.setRecipeIng(newIngList);
+			mapRecipeIngredientNamesList.put(recipe.getRecId(), newIngList);
 			
 			recipe.setAdapted(true);
 			
-			return recipe;
-			
+			replacementMap.put(recipe.getRecId(), mapReplace);
 		}
 		else if(missingDesiredIngList.get(recipe.getRecId()).isEmpty() == false && haveUndesiredIngList.get(recipe.getRecId()).isEmpty() == false)
 		{
 			// Recipe has missing Desired Ingredients
 			// Recipe has Undesired Ingredients
 			// Adapt by adding Desired Ingredient through replacement and Removing Undesired Ingredient
+			boolean isReplaced = false;
+			mapReplace = new HashMap<String, String>();
 			
 			for(String ing : missingDesiredIngList.get(recipe.getRecId()))
 			{
+				isReplaced = false;
 				substitutionList = new ArrayList<String>();
 				substitutionList = findSubstitution(ing);
 				
-				currentIngList = recipe.getRecipeIng();
+				currentIngList = mapRecipeIngredientNamesList.get(recipe.getRecId());
 				for(String recipeIng : currentIngList)
 				{
 					if(substitutionList.contains(recipeIng) == true && desIngList.contains(recipeIng) == false)
 					{
 						newIngList = new ArrayList<String>();
-						newIngList = recipe.getRecipeIng();
+						newIngList = mapRecipeIngredientNamesList.get(recipe.getRecId());
 						Collections.replaceAll(newIngList, recipeIng, ing);
-						recipe.setRecipeIng(newIngList);
+						mapRecipeIngredientNamesList.put(recipe.getRecId(), newIngList);
+						
+						mapReplace.put(recipeIng, ing);
 						break;
 					}
+				}
+				
+				if(isReplaced == false)
+				{
+					newIngList = new ArrayList<String>();
+					newIngList = mapRecipeIngredientNamesList.get(recipe.getRecId());
+					newIngList.add(ing);
+					mapRecipeIngredientNamesList.put(recipe.getRecId(), newIngList);
+					
+					mapReplace.put("ADDED", ing);
 				}
 			}
 			
 			newIngList = new ArrayList<String>();
-			newIngList = recipe.getRecipeIng();
+			newIngList = mapRecipeIngredientNamesList.get(recipe.getRecId());
 			
 			for(String ing : haveUndesiredIngList.get(recipe.getRecId()))
 			{
 				if(newIngList.contains(ing))
 				{
 					newIngList.remove(ing);
+					mapReplace.put("REMOVE", ing);
 				}
 			}
 			
-			recipe.setRecipeIng(newIngList);
+			mapRecipeIngredientNamesList.put(recipe.getRecId(), newIngList);
 			recipe.setAdapted(true);
 			
-			return recipe;
+			replacementMap.put(recipe.getRecId(), mapReplace);
 		}
-		
-		return null;
 	}
 	
 	public void calculateScore(
@@ -173,6 +202,9 @@ public class Adapt {
 		int score = 0;
 		ArrayList<String> aMisDesIngList, aHaveUndesIngList;
 		
+		mapRecipeIngredientNamesList = new HashMap<Integer, ArrayList<String>>();
+		getAllRecipeIngredientNames(recipeList, mapRecipeIngredientNamesList);
+		
 		for(int i=0; i < recipeList.size(); i++)
 		{
 			score = 0;
@@ -181,7 +213,7 @@ public class Adapt {
 			
 			for(int j=0; j < desIngList.size(); j++)
 			{
-				if(recipeList.get(i).getRecipeIng().contains(desIngList.get(j)))
+				if(mapRecipeIngredientNamesList.get(recipeList.get(i).getRecId()).contains(desIngList.get(j)))
 				{
 					score = score + 500;
 				}
@@ -193,7 +225,7 @@ public class Adapt {
 			
 			for(int k=0; k < undesIngList.size(); k++)
 			{
-				if(recipeList.get(i).getRecipeIng().contains(undesIngList.get(k)))
+				if(mapRecipeIngredientNamesList.get(recipeList.get(i).getRecId()).contains(undesIngList.get(k)))
 				{
 					score = score - 500;
 					aHaveUndesIngList.add(undesIngList.get(k));
@@ -242,5 +274,21 @@ public class Adapt {
 		}
 		
 		return substitutionList;
+	}
+	
+	public void getAllRecipeIngredientNames(ArrayList<Recipe> recipeList,
+			Map<Integer, ArrayList<String>> mapRecipeIngredientNamesList)
+	{
+		ArrayList<String> ingNames;
+		for(Recipe rec : recipeList)
+		{
+			ingNames = new ArrayList<String>();
+			for(Ingredient ing : rec.getIngredients())
+			{
+				ingNames.add(ing.getName());
+			}
+			
+			mapRecipeIngredientNamesList.put(rec.getRecId(), ingNames);
+		}
 	}
 }
