@@ -1,4 +1,4 @@
-package QueryRecipe;
+package adaptation;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
