@@ -24,12 +24,13 @@ public class UnitTest {
 	
 	public void startTest()
 	{
-		populateRecipes();
+		//populateRecipes();
 		populateDesiredUndesiredIngredients();
+		recipeList = GeneralizeAndQuery.getRecipeList(GeneralizeAndQuery.getIngIdList(desIngList), GeneralizeAndQuery.getIngIdList(undesIngList));
 		
-		System.out.println(desIngList);
-		System.out.println(undesIngList);
-		System.out.println(recipeList);
+		System.out.println("Desired Ingredients List:" + desIngList);
+		System.out.println("UnDesired Ingredients List:" + undesIngList);
+		System.out.println("Fetched Recipe List Based on DES/Undes Ingredients:" + recipeList);
 		
 		Adapt adapt = new Adapt();
 		
@@ -50,14 +51,20 @@ public class UnitTest {
 		substitutionList = adapt.findSubstitution("papaya");
 		System.out.println("SUBSTITUTION LIST2::" + substitutionList);
 		
-		for(Recipe rec : recipeList)
+		/*for(Recipe rec : recipeList)
 		{
 			adapt.adaptRecipe(rec, 
 				missingDesiredIngList, 
 				haveUndesiredIngList, 
 				replacementMap,
 				mapRecipeIngredientNamesList);
-		}
+		}*/
+		
+		adapt.adaptRecipe(recipeList.get(0), 
+				missingDesiredIngList, 
+				haveUndesiredIngList, 
+				replacementMap,
+				mapRecipeIngredientNamesList);
 		
 		System.out.println("ADAPTATION::" + replacementMap);
 		System.out.println("Final Replaced Ingredients List::" + mapRecipeIngredientNamesList);
