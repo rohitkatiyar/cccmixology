@@ -24,12 +24,37 @@ public class UnitTest {
 	
 	public void startTest()
 	{
+		recipeList = new ArrayList<Recipe>();
+		
 		//populateRecipes();
 		populateDesiredUndesiredIngredients();
-		recipeList = GeneralizeAndQuery.getRecipeList(GeneralizeAndQuery.getIngIdList(desIngList), GeneralizeAndQuery.getIngIdList(undesIngList));
+		recipeList = GeneralizeAndQuery.getRecipeList(GeneralizeAndQuery.getIngIdList(desIngList), 
+				GeneralizeAndQuery.getIngIdList(undesIngList));
 		
 		System.out.println("Desired Ingredients List:" + desIngList);
 		System.out.println("UnDesired Ingredients List:" + undesIngList);
+		
+		if(recipeList.size() == 0)
+		{
+			System.out.println("Exact search returned NULL. Going for generalized search.");
+			
+			recipeList = GeneralizeAndQuery.getGeneralizedRecipeList(GeneralizeAndQuery.getIngIdList(desIngList), 
+					GeneralizeAndQuery.getIngIdList(undesIngList));
+			
+			if(recipeList.size() == 0)
+			{
+				System.out.println("Generalized search returned NULL. Fetching all recipes.");
+				
+				recipeList = GeneralizeAndQuery.getAllRecipeList();
+				
+				if(recipeList.size() == 0)
+				{
+					System.out.println("ERROR: Could not fetch the recipes.");
+					return;
+				}
+			}
+		}
+		
 		System.out.println("Fetched Recipe List Based on DES/Undes Ingredients:" + recipeList);
 		
 		Adapt adapt = new Adapt();
