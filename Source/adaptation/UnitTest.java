@@ -50,23 +50,27 @@ public class UnitTest {
 		substitutionList = adapt.findSubstitution("papaya");
 		System.out.println("SUBSTITUTION LIST2::" + substitutionList);
 		
-		adapt.adaptRecipe(recipeList.get(0), 
+		for(Recipe rec : recipeList)
+		{
+			adapt.adaptRecipe(rec, 
 				missingDesiredIngList, 
 				haveUndesiredIngList, 
 				replacementMap,
 				mapRecipeIngredientNamesList);
+		}
 		
 		System.out.println("ADAPTATION::" + replacementMap);
+		System.out.println("Final Replaced Ingredients List::" + mapRecipeIngredientNamesList);
 	}
 	
 	public void populateDesiredUndesiredIngredients()
 	{
 		desIngList.add("vodka");
 		desIngList.add("rum");
-		desIngList.add("blueberry");
+		desIngList.add("blueberries");
 		
 		undesIngList.add("gin");
-		undesIngList.add("strawberry");
+		undesIngList.add("strawberries");
 		undesIngList.add("whisky");
 	}
 	
@@ -74,8 +78,8 @@ public class UnitTest {
 	{
 		ArrayList<Ingredient> addIng = new ArrayList<Ingredient>();
 		Ingredient ig1 = new Ingredient(1, "vodka", 2, "d");
-		Ingredient ig2 = new Ingredient(2, "blueberry", 2, "d");
-		Ingredient ig3 = new Ingredient(3, "raspberry", 2, "d");
+		Ingredient ig2 = new Ingredient(2, "blueberries", 2, "d");
+		Ingredient ig3 = new Ingredient(3, "raspberries", 2, "d");
 		addIng.add(ig1);
 		addIng.add(ig2);
 		addIng.add(ig3);
@@ -96,7 +100,7 @@ public class UnitTest {
 		addIng = new ArrayList<Ingredient>();
 		ig1 = new Ingredient(1, "vodka", 2, "d");
 		ig2 = new Ingredient(4, "rum", 2, "d");
-		ig3 = new Ingredient(2, "blueberry", 2, "d");
+		ig3 = new Ingredient(2, "blueberries", 2, "d");
 		Ingredient ig4 = new Ingredient(6, "whiskey", 2, "d");
 		addIng.add(ig1);
 		addIng.add(ig2);
@@ -108,7 +112,7 @@ public class UnitTest {
 		
 		addIng = new ArrayList<Ingredient>();
 		ig1 = new Ingredient(1, "vodka", 2, "d");
-		ig2 = new Ingredient(2, "raspberry", 2, "d");
+		ig2 = new Ingredient(2, "raspberries", 2, "d");
 		addIng.add(ig1);
 		addIng.add(ig2);
 				
@@ -118,7 +122,7 @@ public class UnitTest {
 		addIng = new ArrayList<Ingredient>();
 		ig1 = new Ingredient(1, "vodka", 2, "d");
 		ig2 = new Ingredient(5, "gin", 2, "d");
-		ig3 = new Ingredient(7, "strawberry", 2, "d");
+		ig3 = new Ingredient(7, "strawberries", 2, "d");
 		ig4 = new Ingredient(6, "whiskey", 2, "d");
 		addIng.add(ig1);
 		addIng.add(ig2);

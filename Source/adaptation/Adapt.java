@@ -103,7 +103,7 @@ public class Adapt {
 					newIngList.add(ing);
 					mapRecipeIngredientNamesList.put(recipe.getRecId(), newIngList);
 					
-					mapReplace.put("ADDED", ing);
+					mapReplace.put("ADDED_" + ing, ing);
 				}
 			}
 			
@@ -124,7 +124,7 @@ public class Adapt {
 			for(String ing : haveUndesiredIngList.get(recipe.getRecId()))
 			{
 				newIngList.remove(ing);
-				mapReplace.put("REMOVE", ing);
+				mapReplace.put("REMOVE_" + ing, ing);
 			}
 			
 			mapRecipeIngredientNamesList.put(recipe.getRecId(), newIngList);
@@ -156,6 +156,7 @@ public class Adapt {
 						newIngList = mapRecipeIngredientNamesList.get(recipe.getRecId());
 						Collections.replaceAll(newIngList, recipeIng, ing);
 						mapRecipeIngredientNamesList.put(recipe.getRecId(), newIngList);
+						isReplaced = true;
 						
 						mapReplace.put(recipeIng, ing);
 						break;
@@ -169,7 +170,7 @@ public class Adapt {
 					newIngList.add(ing);
 					mapRecipeIngredientNamesList.put(recipe.getRecId(), newIngList);
 					
-					mapReplace.put("ADDED", ing);
+					mapReplace.put("ADDED_" + ing, ing);
 				}
 			}
 			
@@ -181,7 +182,7 @@ public class Adapt {
 				if(newIngList.contains(ing))
 				{
 					newIngList.remove(ing);
-					mapReplace.put("REMOVE", ing);
+					mapReplace.put("REMOVE_" + ing, ing);
 				}
 			}
 			
