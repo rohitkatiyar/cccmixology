@@ -840,6 +840,86 @@ INSERT INTO `recipe_ing` (`recingId`,`recId`,`igId`,`quantity`,`unit`) VALUES
 /*!40000 ALTER TABLE `recipe_ing` ENABLE KEYS */;
 
 
+--
+-- Definition of table `substitution`
+--
+
+DROP TABLE IF EXISTS `substitution`;
+CREATE TABLE `substitution` (
+  `S_no` int(11) NOT NULL AUTO_INCREMENT,
+  `Name` varchar(1000) DEFAULT NULL,
+  `quantity1` varchar(45) DEFAULT NULL,
+  `Substitution` varchar(1000) DEFAULT NULL,
+  `quantity2` varchar(45) DEFAULT NULL,
+  PRIMARY KEY (`S_no`)
+) ENGINE=InnoDB AUTO_INCREMENT=58 DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `substitution`
+--
+
+/*!40000 ALTER TABLE `substitution` DISABLE KEYS */;
+INSERT INTO `substitution` (`S_no`,`Name`,`quantity1`,`Substitution`,`quantity2`) VALUES 
+ (1,'acorn squash ','','butternut squash, pumpkin ',''),
+ (2,'almond extract','1/2 tsp','vanilla extract ','3/4 tsp'),
+ (3,'amberjack','','mahi-mahi, grouper, tilefish, mullet',''),
+ (4,'apples','','pears, quinces',''),
+ (5,'apple juice','','apple cider, pear cider, white grape juice',''),
+ (6,'applesauce','','pumpkin puree, plum puree',''),
+ (7,'avocado','','cooked chayote squash',''),
+ (8,'blackberries','','loganberries, boysenberries, raspberries',''),
+ (9,'blackberry','','loganberry, boysenberry, raspberry',''),
+ (10,'blueberries','','huckleberries, red currants, raspberries, strawberries',''),
+ (11,'blueberry','','huckleberry, red currants, raspberry, strawberry',''),
+ (12,'boysenberries','','blackberries, raspberries',''),
+ (13,'boysenberry','','blackberry, raspberry',''),
+ (14,'coffee liqueur',' 3 tbsp','3 tbsp water + 3/4 tsp insant coffee granules, 3 tbsp cognac, 3 tbsp rum',''),
+ (15,'honey',' 1 cup','1 1/4 cups granulated sugar + 1/4 cup liquid called for in recipe, 1/2 cup granulated sugar + 3/4 cup maple syrup',''),
+ (16,'nectarines','','peaches, plums, apricots, cherries',''),
+ (17,'orange roughy','','flounder, red snapper, tilapia',''),
+ (18,'oyster liquor','','fresh or bottled clam juice',''),
+ (19,'papaya','','mango, peaches, nectarines',''),
+ (20,'peaches','','nectarines, apricots, plums, cherries, mango',''),
+ (21,'pears','','apples, asian pears, quinces',''),
+ (22,'pineapple','','papaya, guava, mango',''),
+ (23,'pineapple juice','','orange juice, grapefruit juice',''),
+ (24,'pine nuts','','walnuts, almonds, pecans',''),
+ (25,'pomegranate juice','','cranberry juice',''),
+ (26,'raisins','','other dried fruits like apricots, blueberries, cranberries, or cherries',''),
+ (27,'raspberries','','strawberries, blackberries',''),
+ (28,'raspberry','','strawberry, blackberry',''),
+ (29,'rhubarb','','cranberries',''),
+ (30,'rosemary','','summer savory, basil, oregano',''),
+ (31,'rum','','brandy, bourbon',''),
+ (32,'savory',' 1 tbsp','2 to 3 tsp chopped thyme or rosemary, 1 to 1 1/2 tsp thyme + 1 to 1/2 tsp mint, 1 to 2 tsp sage, 1 tsp herbes de Provence',''),
+ (33,'strawberries','','raspberries, blueberries',''),
+ (34,'strawberry','','raspberry, blueberry',''),
+ (35,'sugar, confectioners',' 1 cup','1/2 cup +  1 1/2 tbsp granulated sugar + 3/4 tsp cornstarch, fine ground in blender or food processor',''),
+ (36,'sugar, dark brown',' 1 packed cup','1 cup granulated sugar + 2 to 3 tbsp molasses',''),
+ (37,'sugar, light brown',' 1 packed cup','1 cup granulated sugar + 1 to 2 tbsp molasses, 1/2 cup dark brown sugar + 1/2 cup granulated sugar',''),
+ (38,'tarragon','','dill ',''),
+ (39,'tequila','','vodka, light rum',''),
+ (40,'tilapia','','red snapper, orange roughy, sole, flounder',''),
+ (41,'vermouth','','dry sherry, dry white wine',''),
+ (42,'vinegar','','lemon juice or lime juice (for dressings, marinades, sauces, and deglazing pans)',''),
+ (43,'vodka','','gin, white rum, tequila',''),
+ (44,'walnuts','','pine nuts, pecans, almonds',''),
+ (45,'watermelon','','honeydew melon',''),
+ (46,'whiskey','','cognac, brandy, or rum',''),
+ (47,'red wine',' 1 cup','3/4 cup red grape juice + 2 tbsp red wine vinegar or lemon juice + 2 tbsp water (for marinades), beef stock (for sauces and stews)',''),
+ (48,'white wine',' 1 cup','3/4 cup white grape juice, apple juice, or apple cider + 1/4 cup white wine vinegar or lemon juice (for marinades), sherry or vermouth, sake, chicken or vegetable stock (for sauce and stews)',''),
+ (49,'gin','','vodka',''),
+ (50,'rye','','Bourbon/Blended whiskey',''),
+ (51,'white tequila','','gold tequila',''),
+ (52,'rum','','tequila',''),
+ (53,'schnapps','','Liqueur',''),
+ (54,'grenadine syrup','10cl','strawberry syrup','2cl'),
+ (55,'lemon juice','','lime',''),
+ (56,'tomato juice','','2cl tomato ketchup',''),
+ (57,'strawberry syrup','2cl','grenadine syrup','10cl');
+/*!40000 ALTER TABLE `substitution` ENABLE KEYS */;
+
+
 
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
