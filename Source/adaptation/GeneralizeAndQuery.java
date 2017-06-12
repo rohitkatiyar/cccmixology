@@ -1,4 +1,4 @@
-package adaptation;
+package QueryRecipe;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -57,6 +57,46 @@ public class GeneralizeAndQuery {
 		return genIngIdList;
 	}
 
+	/* get Generalized Recipe List */
+	public static ArrayList<Recipe> getGeneralizedRecipeList(ArrayList<Integer> desiredIngIdList, ArrayList<Integer> undesiredIngIdList) {
+		ArrayList<Recipe> recipeList = new ArrayList<Recipe>();
+		ArrayList<Integer> recipeIdList = new ArrayList<Integer>();
+		String desiredQuery = "SELECT * from recipe_ing where igId=";
+		for(int i=0; i< desiredIngIdList.size(); i++) {
+			desiredQuery += desiredIngIdList.get(i);
+			if(i <desiredIngIdList.size()-1) {
+				desiredQuery += "  OR igId= ";
+			}
+		}
+		desiredQuery += " GROUP BY recId;";
+		System.out.println(desiredQuery);
+
+		Connection connection = null;
+		try {
+			connection = JdbcConnection.getConnection();
+			PreparedStatement prepStmt = connection.prepareStatement(desiredQuery);
+			ResultSet rs = prepStmt.executeQuery();
+
+			while(rs.next()) {
+				int recId = rs.getInt("recId");
+				if(!recipeIdList.contains(recId)) {
+					recipeIdList.add(recId);
+				}
+			}
+
+			recipeList = convertToRecipeList(recipeIdList);
+
+			connection.close();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+
+		System.out.println(recipeList.size());
+		return recipeList;
+	}
+
+	
+	/* get ingredients id list from name list */
 	public static ArrayList<Integer> getIngIdList(ArrayList<String> ingList) {
 		Connection connection= null;
 		ArrayList<Integer> ingIdList = new ArrayList<Integer>();
@@ -92,7 +132,7 @@ public class GeneralizeAndQuery {
 		for(int i=0; i< desiredIngIdList.size(); i++) {
 			desiredQuery += desiredIngIdList.get(i);
 			if(i <desiredIngIdList.size()-1) {
-				desiredQuery += "  OR igId= ";
+				desiredQuery += " OR igId= ";
 			}
 		}
 		desiredQuery += " GROUP BY recId HAVING c="+desiredIngIdList.size() +";";
@@ -136,6 +176,53 @@ public class GeneralizeAndQuery {
 			}
 
 
+			recipeList = convertToRecipeList(recipeIdList);
+
+			connection.close();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+
+		System.out.println(recipeList.size());
+		return recipeList;
+	}
+	
+	/* get All Recipe List */
+	public static ArrayList<Recipe> getAllRecipeList() {
+		ArrayList<Recipe> recipeList = new ArrayList<Recipe>();
+		ArrayList<Integer> recipeIdList = new ArrayList<Integer>();
+		String query = "SELECT * from recipe_ing GROUP BY recId;";
+		System.out.println(query);
+		
+		Connection connection = null;
+		try {
+			connection = JdbcConnection.getConnection();
+			PreparedStatement prepStmt = connection.prepareStatement(query);
+			ResultSet rs = prepStmt.executeQuery();
+
+			while(rs.next()) {
+				int recId = rs.getInt("recId");
+				if(!recipeIdList.contains(recId)) {
+					recipeIdList.add(recId);
+				}
+			}
+
+			recipeList = convertToRecipeList(recipeIdList);
+
+			connection.close();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+
+		System.out.println(recipeList.size());
+		return recipeList;
+	}
+
+	public static ArrayList<Recipe> convertToRecipeList(ArrayList<Integer> recipeIdList) {
+		ArrayList<Recipe> recipeList = new ArrayList<Recipe>();
+		Connection connection = null;
+		try {
+			connection = JdbcConnection.getConnection();
 			//convert recipeIdList to Araylist of recipes
 			for(int id: recipeIdList) {
 				Recipe recipe = new Recipe(id);
@@ -144,8 +231,8 @@ public class GeneralizeAndQuery {
 				ArrayList<Ingredient> ingredients = new ArrayList<Ingredient>();
 				//
 				String ingQuery = "Select * from recipe_ing where recId="+id+";";
-				prepStmt = connection.prepareStatement(ingQuery);
-				rs = prepStmt.executeQuery();
+				PreparedStatement prepStmt = connection.prepareStatement(ingQuery);
+				ResultSet rs = prepStmt.executeQuery();
 				while(rs.next()) {
 					int ingId = rs.getInt("igId");
 					double ingQuantity = rs.getDouble("quantity");
@@ -174,16 +261,12 @@ public class GeneralizeAndQuery {
 
 				recipeList.add(recipe);
 			}
-
 			connection.close();
 		} catch(Exception e) {
 			e.printStackTrace();
 		}
-
-		System.out.println(recipeList.size());
 		return recipeList;
 	}
-
 
 
 	public static void main(String args[]) {
@@ -213,9 +296,14 @@ public class GeneralizeAndQuery {
 			ArrayList<Integer> generalizeDesiredIngIdList = getGeneralizedIngIdList(desiredIngList);
 			ArrayList<Integer> generalizeUndesiredIngIdList = getGeneralizedIngIdList(undesiredIngList);
 
-			recipeList = getRecipeList(generalizeDesiredIngIdList, generalizeUndesiredIngIdList);
+			recipeList = getGeneralizedRecipeList(generalizeDesiredIngIdList, generalizeUndesiredIngIdList);
 		}
-
+		
+		// if generalized recipe list is still empty return all recipes
+		if(recipeList.isEmpty()) {
+			recipeList = getAllRecipeList();
+		}
+		
 		System.out.println("Result:");
 		for(Recipe recipe: recipeList) {
 			System.out.println(recipe.toString());
