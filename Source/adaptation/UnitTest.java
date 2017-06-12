@@ -33,8 +33,10 @@ public class UnitTest {
 		
 		Adapt adapt = new Adapt();
 		
+		adapt.getAllRecipeIngredientNames(recipeList, mapRecipeIngredientNamesList);
+		
 		adapt.calculateScore(desIngList, undesIngList, recipeList, recScore, 
-				missingDesiredIngList, haveUndesiredIngList);
+				missingDesiredIngList, haveUndesiredIngList,mapRecipeIngredientNamesList);
 		
 		System.out.println("SCORE LIST::" + recScore);
 		System.out.println("Missing Desired Ingredient List" + missingDesiredIngList);
@@ -51,7 +53,8 @@ public class UnitTest {
 		adapt.adaptRecipe(recipeList.get(0), 
 				missingDesiredIngList, 
 				haveUndesiredIngList, 
-				replacementMap);
+				replacementMap,
+				mapRecipeIngredientNamesList);
 		
 		System.out.println("ADAPTATION::" + replacementMap);
 	}

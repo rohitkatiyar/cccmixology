@@ -40,13 +40,14 @@ public class Adapt {
 		
 		recipeList = GeneralizeAndQuery.getRecipeList(desIngIDsList, undesIngIDsList);
 		
-		//obj.getAllRecipeIngredientNames(recipeList, mapRecipeIngredientNamesList);
+		obj.getAllRecipeIngredientNames(recipeList, mapRecipeIngredientNamesList);
 	}
 	
 	public void adaptRecipe(Recipe recipe, 
 			Map<Integer, ArrayList<String>> missingDesiredIngList,
 			Map<Integer, ArrayList<String>> haveUndesiredIngList,
-			Map<Integer, Map<String,String>> replacementMap)
+			Map<Integer, Map<String,String>> replacementMap,
+			Map<Integer, ArrayList<String>> mapRecipeIngredientNamesList)
 	{
 		// substitutionList contains list of ingredients the which can be replaced with the desired one
 		ArrayList<String> newIngList, substitutionList, currentIngList;
@@ -197,13 +198,14 @@ public class Adapt {
 			ArrayList<Recipe> recipeList, 
 			Map<Integer, Integer> recScore, 
 			Map<Integer, ArrayList<String>> missingDesiredIngList, 
-			Map<Integer, ArrayList<String>> haveUndesiredIngList)
+			Map<Integer, ArrayList<String>> haveUndesiredIngList,
+			Map<Integer, ArrayList<String>> mapRecipeIngredientNamesList)
 	{
 		int score = 0;
 		ArrayList<String> aMisDesIngList, aHaveUndesIngList;
 		
-		mapRecipeIngredientNamesList = new HashMap<Integer, ArrayList<String>>();
-		getAllRecipeIngredientNames(recipeList, mapRecipeIngredientNamesList);
+		//mapRecipeIngredientNamesList = new HashMap<Integer, ArrayList<String>>();
+		//getAllRecipeIngredientNames(recipeList, mapRecipeIngredientNamesList);
 		
 		for(int i=0; i < recipeList.size(); i++)
 		{
