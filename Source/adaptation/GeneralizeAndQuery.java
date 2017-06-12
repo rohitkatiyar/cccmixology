@@ -3,7 +3,6 @@ package adaptation;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 
 import connection.JdbcConnection;
@@ -35,18 +34,28 @@ public class GeneralizeAndQuery {
 
 	}
 
-	public static ArrayList<String> generalizedIngList(ArrayList<String> ingList) {
-		ArrayList<String> genIngList = new ArrayList<String>();
+	/* get generalized Ingredients Id List */
+	public static ArrayList<Integer> getGeneralizedIngIdList(ArrayList<String> ingList) {
+		ArrayList<Integer> genIngIdList = new ArrayList<Integer>();
+		Connection connection = null;
+		try {
+			for(String ing: ingList) {
+				String genIngName = generalizeIngredients(ing);
+				//
+				String query = "Select * from ingredients where name='"+genIngName+"';";
+				connection = JdbcConnection.getConnection();
+				PreparedStatement prepStmt = connection.prepareStatement(query);
+				ResultSet rs = prepStmt.executeQuery();
+				while(rs.next()) {
+					genIngIdList.add(rs.getInt("ingId"));
+				}
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 
-		return genIngList;
+		return genIngIdList;
 	}
-
-	/* get Generalized Recipe List */
-	public static ArrayList<Recipe> getGeneralizedRecipeList(ArrayList<String> desiredIngList, ArrayList<String> undesiredIngList) {
-
-		return null;
-	}
-
 
 	public static ArrayList<Integer> getIngIdList(ArrayList<String> ingList) {
 		Connection connection= null;
@@ -55,8 +64,8 @@ public class GeneralizeAndQuery {
 			for(String ing: ingList) {
 				String query = "SELECT * from ingredients where name='"+ing+"';";
 				connection = JdbcConnection.getConnection();
-				PreparedStatement initialQuery = connection.prepareStatement(query);
-				ResultSet rs = initialQuery.executeQuery();
+				PreparedStatement prepStmt = connection.prepareStatement(query);
+				ResultSet rs = prepStmt.executeQuery();
 				Integer id = null;
 				while(rs.next()) {
 					id = rs.getInt("ingId");					
@@ -130,7 +139,7 @@ public class GeneralizeAndQuery {
 			//convert recipeIdList to Araylist of recipes
 			for(int id: recipeIdList) {
 				Recipe recipe = new Recipe(id);
-				
+
 				// get ingredients from recipe_ing
 				ArrayList<Ingredient> ingredients = new ArrayList<Ingredient>();
 				//
@@ -142,19 +151,19 @@ public class GeneralizeAndQuery {
 					double ingQuantity = rs.getDouble("quantity");
 					String ingUnit = rs.getString("unit");
 					String ingName = null;
-					
+
 					String igQ = "Select * from ingredients where ingId="+ingId+";";
 					PreparedStatement prepStmtN = connection.prepareStatement(igQ);
 					ResultSet rsN = prepStmtN.executeQuery();
 					while(rsN.next()) {
 						ingName = rsN.getString("name");
 					}
-					
+
 					Ingredient ing = new Ingredient(ingId, ingName, ingQuantity, ingUnit);
 					ingredients.add(ing);
 				}				
 				recipe.setIngredients(ingredients);
-				
+
 				// get preparation for recipe
 				String prepQuery = "Select * from recipe where recipeId="+id+";";
 				prepStmt = connection.prepareStatement(prepQuery);
@@ -162,7 +171,7 @@ public class GeneralizeAndQuery {
 				while(rs.next()) {
 					recipe.setSteps(rs.getString("preparation"));
 				}
-				
+
 				recipeList.add(recipe);
 			}
 
@@ -182,7 +191,7 @@ public class GeneralizeAndQuery {
 		ArrayList<String> undesiredIngList = new ArrayList<String>();
 
 		desiredIngList.add("white rum");
-		desiredIngList.add("lime");
+		desiredIngList.add("gin");
 
 		undesiredIngList.add("lemon juice");
 		undesiredIngList.add("coca-cola");
@@ -191,26 +200,27 @@ public class GeneralizeAndQuery {
 		ArrayList<Integer> desiredIngIdList = getIngIdList(desiredIngList);
 		ArrayList<Integer> undesiredIngIdList = getIngIdList(undesiredIngList);
 
-		ArrayList<Recipe> recipeList = null;
+		ArrayList<Recipe> recipeList = new ArrayList<Recipe>();
 
 		// get recipes that exactly match user request
 		if(allValidIng) {
-			recipeList = getRecipeList(desiredIngIdList, undesiredIngIdList);
-
-			System.out.println("Result:");
-			for(Recipe recipe: recipeList) {
-				System.out.println(recipe.toString());
-			}
+			recipeList = getRecipeList(desiredIngIdList, undesiredIngIdList);		
 		}
-		
+
 		// generalize ingredients and get recipes if recipe list is empty or not all ingredients are valid
-		/*if(recipeList.isEmpty()) {
-			ArrayList<String> generalizeDesiredIng = generalizedIngList(desiredIngList);
-			ArrayList<String> generalizeUndesiredIng = generalizedIngList(undesiredIngList);
+		if(recipeList.isEmpty()) {
+			System.out.println("Generalizing ingredients and querying");
+			ArrayList<Integer> generalizeDesiredIngIdList = getGeneralizedIngIdList(desiredIngList);
+			ArrayList<Integer> generalizeUndesiredIngIdList = getGeneralizedIngIdList(undesiredIngList);
 
-			ArrayList<Recipe> generalizedRecipeList = getGeneralizedRecipeList(generalizeDesiredIng, generalizeUndesiredIng);
+			recipeList = getRecipeList(generalizeDesiredIngIdList, generalizeUndesiredIngIdList);
 		}
-		 */
+
+		System.out.println("Result:");
+		for(Recipe recipe: recipeList) {
+			System.out.println(recipe.toString());
+		}
+
 
 
 
