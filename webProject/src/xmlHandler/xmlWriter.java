@@ -1,4 +1,4 @@
-package xmlHandler;
+package adaptation;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -11,9 +11,6 @@ import javax.xml.transform.*;
 import javax.xml.transform.dom.*;
 import javax.xml.transform.stream.*;
 import org.xml.sax.*;
-
-import datatype.Recipe;
-
 import org.w3c.dom.*;
 
 public class xmlWriter {
@@ -50,7 +47,7 @@ public class xmlWriter {
         Element rootRetrieve = dom.createElement("retrieve");
         rootEle.appendChild(rootRetrieve);
         
-        xmlWriter.writeRecipe(rootEle,dom);
+        xmlWriter.writeRecipe(recipe,rootEle,dom);
         
         Element rootReuse = dom.createElement("reuse");
         rootEle.appendChild(rootReuse);
@@ -62,16 +59,32 @@ public class xmlWriter {
         
         for(String key : mapReplacementForRecipe.keySet())
         {
-        	/*if()
+        	if(key.contains("ADDED_") == true)
         	{
-        		
-        	}*/
+        		replacementString = replacementString + "Add " + mapReplacementForRecipe.get(key) + ". ";
+        	}
+        	else if(key.contains("REMOVE_") == true)
+        	{
+        		replacementString = replacementString + "Remove " + mapReplacementForRecipe.get(key) + ". ";
+        	}
+        	else if(key.compareTo("PERFECT") == 0)
+        	{
+        		replacementString = "Perfect recipe. No adaptation required";
+        	}
+        	else
+        	{
+        		replacementString = replacementString + "Replace " + key + " with " + mapReplacementForRecipe.get(key) + ". ";
+        	}
         }
         
-        rootAdaptation.appendChild(dom.createTextNode("replace pineapple juice with apple juice"));
+        rootAdaptation.appendChild(dom.createTextNode(replacementString));
         rootReuse.appendChild(rootAdaptation);
 
-        xmlWriter.writeRecipe(rootReuse,dom);
+        if(recipe.isAdapted())
+        {
+        	Recipe adaptedRecipe = createTheAdaptedRecipe(recipe, mapReplacementForRecipe);
+            xmlWriter.writeRecipe(adaptedRecipe,rootReuse,dom);
+        }
        
 
         dom.appendChild(rootEle);
@@ -100,46 +113,106 @@ public class xmlWriter {
         }
     }
     
-    public static Element writeRecipe(Element root,Document dom){
+    public static Element writeRecipe(Recipe recipe, Element root, Document dom){
         Element rootrecipe = dom.createElement("recipe");
         root.appendChild(rootrecipe);
         
         Element e = dom.createElement("title");
-        e.appendChild(dom.createTextNode("Bora Bora"));
+        e.appendChild(dom.createTextNode(recipe.getTitle()));
         rootrecipe.appendChild(e);
         
         Element rootIngredients = dom.createElement("ingredients");
         rootrecipe.appendChild(rootIngredients);
         
-        for (int i=0;i<4;i++){
+        for (Ingredient ing : recipe.getIngredients())
+        {
             Element rootIngredient = dom.createElement("ingredient");
             rootIngredients.appendChild(rootIngredient);
         
             Attr quantity = dom.createAttribute("quantity");
-            quantity.setValue("10");
+            quantity.setValue("" + ing.getQuantity());
             rootIngredient.setAttributeNode(quantity);
 
             Attr unit= dom.createAttribute("unit");
-            unit.setValue("cl");    
+            unit.setValue(ing.getUnit());    
             rootIngredient.setAttributeNode(unit);
             
             Attr food= dom.createAttribute("food");
-            food.setValue("pinaple juice");    
+            food.setValue(ing.getName());    
             rootIngredient.setAttributeNode(food);
          
-            rootIngredient.appendChild(dom.createTextNode("10 cl pineapple juice"));
+            rootIngredient.appendChild(dom.createTextNode(ing.getQuantity() + " " + ing.getUnit() + " " + ing.getName()));
             rootrecipe.appendChild(rootIngredient);
         }
         
-        Element rootPreperation = dom.createElement("preperation");
+        Element rootPreperation = dom.createElement("preparation");
         rootrecipe.appendChild(rootPreperation);
         
-        for (int i=0;i<3;i++){
+        String steps[] = recipe.getSteps().split("|");
+        
+        for (String step : steps)
+        {
             Element rootStep = dom.createElement("step");
-            rootStep.appendChild(dom.createTextNode("This Recipe has to be made in a shaker"));
+            rootStep.appendChild(dom.createTextNode(step.trim()));
             rootPreperation.appendChild(rootStep);
         }
         return root;
+    }
+    
+    public static Recipe createTheAdaptedRecipe(Recipe recipe, Map<String,String> mapReplacementForRecipe)
+    {
+    	int max = 500000;
+    	int min = 1000;
+    	int random = (int )(Math.random() * max + min);
+    	
+    	Recipe adaptedRecipe = new Recipe(random);
+    	
+    	adaptedRecipe.setTitle("Adaptation of " + recipe.getTitle());
+    	adaptedRecipe.setSteps(recipe.getSteps());//TODO Have to adapt steps too
+    	adaptedRecipe.setAdapted(true);
+    	
+    	ArrayList<Ingredient> newIngList = new ArrayList<Ingredient>();
+    	newIngList = recipe.getIngredients();
+    	
+    	int ingId = 1000;
+    	
+    	for(String key : mapReplacementForRecipe.keySet())
+        {
+        	if(key.contains("ADDED_") == true)
+        	{
+        		Ingredient newIng = new Ingredient(ingId, mapReplacementForRecipe.get(key),0.0, "");
+        		ingId++;
+        		newIngList.add(newIng);	
+        	}
+        	else if(key.contains("REMOVE_") == true)
+        	{
+        		for(Ingredient in : newIngList)
+        		{
+        			if(in.getName().equals(mapReplacementForRecipe.get(key)))
+        			{
+        				newIngList.remove(in);
+        				break;
+        			}
+        		}
+        	}
+        	else if(key.compareTo("PERFECT") == 0)
+        	{
+        		
+        	}
+        	else
+        	{
+        		for(Ingredient in : newIngList)
+        		{
+        			if(in.getName().equals(mapReplacementForRecipe.get(key)))
+        			{
+        				in.setId(ingId);
+        				in.setName(mapReplacementForRecipe.get(key));
+        				ingId++;
+        			}
+        		}
+        	}
+        }
+    	return adaptedRecipe;
     }
 
 }

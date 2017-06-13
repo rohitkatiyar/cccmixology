@@ -1,4 +1,4 @@
-package query;
+package adaptation;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -6,12 +6,10 @@ import java.sql.ResultSet;
 import java.util.ArrayList;
 
 import connection.JdbcConnection;
-import datatype.Ingredient;
-import datatype.Recipe;
 
 public class GeneralizeAndQuery {
 
-	public static boolean allValidIng = true;
+	private static boolean allValidIng = true;
 
 	public static String generalizeIngredients(String ingredient) {
 		String generalizedIng = "";
@@ -259,6 +257,7 @@ public class GeneralizeAndQuery {
 				rs = prepStmt.executeQuery();
 				while(rs.next()) {
 					recipe.setSteps(rs.getString("preparation"));
+					recipe.setTitle(rs.getString("title"));
 				}
 
 				recipeList.add(recipe);

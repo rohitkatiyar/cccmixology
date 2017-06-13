@@ -1,4 +1,4 @@
-package datatype;
+package adaptation;
 
 import java.util.ArrayList;
 
@@ -6,6 +6,7 @@ public class Recipe {
 	private int recId;
 	private ArrayList<Ingredient> ingredients;
 	private String steps;
+	private String title;
 	private boolean isAdapted;
 	
 	public Recipe(int recId) {
@@ -27,6 +28,14 @@ public class Recipe {
 		this.ingredients = ingredients;
 		this.steps = steps;
 		this.isAdapted = false;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
 	}
 
 	public boolean isAdapted() {
