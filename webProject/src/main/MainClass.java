@@ -13,8 +13,11 @@ import xmlHandler.xmlWriter;
 
 public class MainClass {
 
+	public static void main(String[] args) {
+		String s = getCocktailRecipe("Strawberry syrup|Apple juice", "Mint");
+	}
 	public static String getCocktailRecipe(String desiredIngredients, String undesiredIngredients) {
-
+		System.out.println("In main method");
 		System.out.println(desiredIngredients);
 		System.out.println(undesiredIngredients);
 
@@ -79,7 +82,7 @@ public class MainClass {
 
 		//Convert recipe to xml
 		String output = xmlWriter.writeOuputXml("", recipeList.get(0), replacementMap, mapRecipeIngredientNamesList); // = xmlParser(recipe);
-
+		System.out.println(output);
 		return output;
 	}
 
