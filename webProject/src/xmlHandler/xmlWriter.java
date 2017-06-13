@@ -148,7 +148,7 @@ public class xmlWriter {
         Element rootPreperation = dom.createElement("preparation");
         rootrecipe.appendChild(rootPreperation);
         
-        String steps[] = recipe.getSteps().split("|");
+        String steps[] = recipe.getSteps().split("\\|");
         
         for (String step : steps)
         {
@@ -180,7 +180,7 @@ public class xmlWriter {
         {
         	if(key.contains("ADDED_") == true)
         	{
-        		Ingredient newIng = new Ingredient(ingId, mapReplacementForRecipe.get(key),0.0, "");
+        		Ingredient newIng = new Ingredient(ingId, mapReplacementForRecipe.get(key),3.0, "");
         		ingId++;
         		newIngList.add(newIng);	
         	}
@@ -212,6 +212,9 @@ public class xmlWriter {
         		}
         	}
         }
+    	
+    	adaptedRecipe.setIngredients(newIngList);
+    	
     	return adaptedRecipe;
     }
 
