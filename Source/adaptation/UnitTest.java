@@ -93,6 +93,8 @@ public class UnitTest {
 		
 		System.out.println("ADAPTATION::" + replacementMap);
 		System.out.println("Final Replaced Ingredients List::" + mapRecipeIngredientNamesList);
+		
+		xmlWriter.writeOuputXml("URL QUERY", recipeList.get(0), replacementMap, mapRecipeIngredientNamesList);
 	}
 	
 	public void populateDesiredUndesiredIngredients()
