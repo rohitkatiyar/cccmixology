@@ -1,6 +1,10 @@
 package main;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+
+import adaptation.Adapt;
 import datatype.Recipe;
 import query.GeneralizeAndQuery;
 
@@ -15,9 +19,59 @@ public class MainClass {
 		ArrayList<String> undesiredIngList = parseIngredients(undesiredIngredients);
 
 		//query existing recipe
-		ArrayList<Recipe> recipeList = queryRecipe(desiredIngList, undesiredIngList);
+		ArrayList<Recipe> recipeList = null;
+		recipeList = queryRecipe(desiredIngList, undesiredIngList);
 
-		//adapt recipe
+		if(recipeList.size() == 0)
+		{
+			System.out.println("Exact search returned NULL. Going for generalized search.");
+			
+			recipeList = GeneralizeAndQuery.getGeneralizedRecipeList(GeneralizeAndQuery.getIngIdList(desiredIngList), 
+					GeneralizeAndQuery.getIngIdList(undesiredIngList));
+			
+			if(recipeList.size() == 0)
+			{
+				System.out.println("Generalized search returned NULL. Fetching all recipes.");
+				
+				recipeList = GeneralizeAndQuery.getAllRecipeList();
+				
+				if(recipeList.size() == 0)
+				{
+					System.out.println("ERROR: Could not fetch the recipes.");
+					return;
+				}
+			}
+		}
+		
+		static Map<Integer, ArrayList<String>> mapRecipeIngredientNamesList = new HashMap<Integer, ArrayList<String>>();
+		
+		Map<Integer, Integer> recScore = new HashMap<Integer, Integer>();// Recipe Id, Score
+		Map<Integer, ArrayList<String>> missingDesiredIngList = new HashMap<Integer, ArrayList<String>>();
+		Map<Integer, ArrayList<String>> haveUndesiredIngList = new HashMap<Integer, ArrayList<String>>();
+		
+		// Map to record the adaptation for each recipe, will be used while giving the output XML
+		Map<Integer, Map<String,String>> replacementMap = new HashMap<Integer, Map<String,String>>();
+		
+        Adapt adapt = new Adapt();
+		
+		adapt.getAllRecipeIngredientNames(recipeList, mapRecipeIngredientNamesList);
+		
+		adapt.calculateScore(desiredIngList, undesiredIngList, recipeList, recScore, 
+				missingDesiredIngList, haveUndesiredIngList,mapRecipeIngredientNamesList);
+		
+		System.out.println("SCORE LIST::" + recScore);
+		System.out.println("Missing Desired Ingredient List" + missingDesiredIngList);
+		System.out.println("Have UnDesired Ingredient List" + haveUndesiredIngList);
+		
+		adapt.adaptRecipe(recipeList.get(0), 
+				missingDesiredIngList, 
+				haveUndesiredIngList, 
+				replacementMap,
+				mapRecipeIngredientNamesList);
+		
+		System.out.println("ADAPTATION::" + replacementMap);
+		System.out.println("Final Replaced Ingredients List::" + mapRecipeIngredientNamesList);
+		
 		//Recipe = TODO
 
 		//Convert recipe to xml
