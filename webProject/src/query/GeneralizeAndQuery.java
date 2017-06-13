@@ -1,15 +1,17 @@
-package adaptation;
+package query;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
 
+import datatype.Recipe;
+import datatype.Ingredient;
 import connection.JdbcConnection;
 
 public class GeneralizeAndQuery {
 
-	private static boolean allValidIng = true;
+	public static boolean allValidIng = true;
 
 	public static String generalizeIngredients(String ingredient) {
 		String generalizedIng = "";

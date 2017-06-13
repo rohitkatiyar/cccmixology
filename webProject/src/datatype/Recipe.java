@@ -1,4 +1,4 @@
-package adaptation;
+package datatype;
 
 import java.util.ArrayList;
 
@@ -8,6 +8,10 @@ public class Recipe {
 	private String steps;
 	private String title;
 	private boolean isAdapted;
+	
+	public Recipe() {
+		
+	}
 	
 	public Recipe(int recId) {
 		super();

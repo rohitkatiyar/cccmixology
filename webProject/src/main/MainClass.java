@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.w3c.dom.Document;
+
 import adaptation.Adapt;
 import datatype.Recipe;
 import query.GeneralizeAndQuery;
+import xmlHandler.xmlWriter;
 
 public class MainClass {
 
@@ -38,12 +41,12 @@ public class MainClass {
 				if(recipeList.size() == 0)
 				{
 					System.out.println("ERROR: Could not fetch the recipes.");
-					return;
+					return null;
 				}
 			}
 		}
 		
-		static Map<Integer, ArrayList<String>> mapRecipeIngredientNamesList = new HashMap<Integer, ArrayList<String>>();
+		Map<Integer, ArrayList<String>> mapRecipeIngredientNamesList = new HashMap<Integer, ArrayList<String>>();
 		
 		Map<Integer, Integer> recScore = new HashMap<Integer, Integer>();// Recipe Id, Score
 		Map<Integer, ArrayList<String>> missingDesiredIngList = new HashMap<Integer, ArrayList<String>>();
@@ -75,7 +78,7 @@ public class MainClass {
 		//Recipe = TODO
 
 		//Convert recipe to xml
-		String output = null; // = xmlParser(recipe);
+		String output = xmlWriter.writeOuputXml("", recipeList.get(0), replacementMap, mapRecipeIngredientNamesList); // = xmlParser(recipe);
 
 		return output;
 	}
