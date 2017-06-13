@@ -257,6 +257,7 @@ public class GeneralizeAndQuery {
 				rs = prepStmt.executeQuery();
 				while(rs.next()) {
 					recipe.setSteps(rs.getString("preparation"));
+					recipe.setTitle(rs.getString("title"));
 				}
 
 				recipeList.add(recipe);
